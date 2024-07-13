@@ -8,20 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
         minDate: "today"
     });
 
-    // Define tag icons mapping
     const tagIcons = {
         cinema: 'local_movies',
         festival: 'celebration',
         'musical-concert': 'music_note',
         'classical-music': 'music_off',
         children: 'child_care',
-        // Add more tags and their respective icons here
     };
 
-    // Track selected tags
     let selectedTags = new Set();
 
-    // Handle icon clicks
     tagSelection.addEventListener('click', (e) => {
         if (e.target.classList.contains('tag-icon') || e.target.parentElement.classList.contains('tag-icon')) {
             const tagElement = e.target.classList.contains('tag-icon') ? e.target : e.target.parentElement;
@@ -41,16 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const eventName = document.getElementById('eventName').value;
         const eventDate = document.getElementById('eventDate').value;
         const eventTickets = document.getElementById('eventTickets').value;
+        const ticketPrice = document.getElementById('ticketPrice').value;
         const eventLocation = document.getElementById('eventLocation').value;
         const eventTags = Array.from(selectedTags);
 
-        addEvent(eventName, eventDate, eventTickets, eventLocation, eventTags);
+        addEvent(eventName, eventDate, eventTickets, ticketPrice, eventLocation, eventTags);
         eventForm.reset();
         selectedTags.clear();
         document.querySelectorAll('.tag-icon').forEach(icon => icon.classList.remove('selected'));
     });
 
-    function addEvent(name, date, tickets, location, tags) {
+    function addEvent(name, date, tickets, price, location, tags) {
         const li = document.createElement('li');
 
         const eventText = document.createElement('span');
@@ -63,12 +60,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const tagElement = document.createElement('div');
             tagElement.className = 'tag';
 
-            // Get the icon for the tag or use a default icon
             const icon = tagIcons[tag] || 'label';
             tagElement.innerHTML = `<i class="material-icons">${icon}</i>${tag.charAt(0).toUpperCase() + tag.slice(1).replace(/-/g, ' ')}`;
 
             tagContainer.appendChild(tagElement);
         });
+
+        const ticketCount = document.createElement('div');
+        ticketCount.className = 'ticket-count';
+        const ticketIcon = document.createElement('i');
+        ticketIcon.className = 'material-icons';
+        ticketIcon.textContent = 'confirmation_number';
+        const ticketNumber = document.createElement('span');
+        ticketNumber.textContent = `x ${tickets}`;
+
+        ticketCount.appendChild(ticketIcon);
+        ticketCount.appendChild(ticketNumber);
+
+        const priceElement = document.createElement('div');
+        priceElement.className = 'ticket-price';
+        priceElement.textContent = `$${parseFloat(price).toFixed(2)} per ticket`;
 
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = '<i class="material-icons">delete</i>';
@@ -90,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editForm.style.display = 'flex';
             eventText.style.display = 'none';
             ticketCount.style.display = 'none';
+            priceElement.style.display = 'none';
             eventMap.style.display = 'none';
             editButton.style.display = 'none';
             deleteButton.style.display = 'none';
@@ -104,6 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const editDate = document.createElement('input');
         editDate.type = 'text';
         editDate.value = date;
+        const editPrice = document.createElement('input');
+        editPrice.type = 'number';
+        editPrice.value = price;
+        editPrice.step = '0.01';
         const saveButton = document.createElement('button');
         saveButton.className = 'save-button';
         saveButton.innerHTML = '<i class="material-icons">save</i> Save';
@@ -111,40 +127,22 @@ document.addEventListener('DOMContentLoaded', () => {
             eventText.textContent = `${editName.value} - ${editDate.value} - ${eventLocation.value}`;
             name = editName.value;
             date = editDate.value;
+            price = editPrice.value;
             eventLocation = editLocation.value;
             editForm.style.display = 'none';
             eventText.style.display = 'block';
             ticketCount.style.display = 'flex';
+            priceElement.style.display = 'block';
             eventMap.style.display = 'block';
             editButton.style.display = 'inline-block';
             deleteButton.style.display = 'inline-block';
             importantButton.style.display = 'inline-block';
-
-            // Update tags and icons
-            tagContainer.innerHTML = '';
-            Array.from(selectedTags).forEach(tag => {
-                const tagElement = document.createElement('div');
-                tagElement.className = 'tag';
-                const icon = tagIcons[tag] || 'label';
-                tagElement.innerHTML = `<i class="material-icons">${icon}</i>${tag.charAt(0).toUpperCase() + tag.slice(1).replace(/-/g, ' ')}`;
-                tagContainer.appendChild(tagElement);
-            });
         });
 
         editForm.appendChild(editName);
         editForm.appendChild(editDate);
+        editForm.appendChild(editPrice);
         editForm.appendChild(saveButton);
-
-        const ticketCount = document.createElement('div');
-        ticketCount.className = 'ticket-count';
-        const ticketIcon = document.createElement('i');
-        ticketIcon.className = 'material-icons';
-        ticketIcon.textContent = 'confirmation_number';
-        const ticketNumber = document.createElement('span');
-        ticketNumber.textContent = `x ${tickets}`;
-
-        ticketCount.appendChild(ticketIcon);
-        ticketCount.appendChild(ticketNumber);
 
         const eventMap = document.createElement('div');
         eventMap.className = 'event-map';
@@ -152,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         li.appendChild(eventText);
         li.appendChild(tagContainer);
         li.appendChild(ticketCount);
+        li.appendChild(priceElement);
         li.appendChild(eventMap);
         li.appendChild(importantButton);
         li.appendChild(editButton);
