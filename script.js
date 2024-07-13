@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventForm = document.getElementById('eventForm');
     const eventList = document.getElementById('eventList');
     const tagSelection = document.getElementById('tagSelection');
+    const ticketModal = document.getElementById('ticketModal');
+    const ticketForm = document.getElementById('ticketForm');
+    const paymentSection = document.getElementById('paymentSection');
+    const ticketSection = document.getElementById('ticketSection');
+    const ticketDetails = document.getElementById('ticketDetails');
+    const ticketQRCode = document.getElementById('ticketQRCode');
 
     flatpickr(".datepicker", {
         dateFormat: "Y-m-d",
@@ -45,11 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
         eventForm.reset();
         selectedTags.clear();
         document.querySelectorAll('.tag-icon').forEach(icon => icon.classList.remove('selected'));
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' 
+        });
     });
 
     function addEvent(name, date, tickets, price, location, tags) {
         const li = document.createElement('li');
-
         const eventText = document.createElement('span');
         eventText.textContent = `${name} - ${date} - ${location}`;
 
@@ -59,10 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tags.forEach(tag => {
             const tagElement = document.createElement('div');
             tagElement.className = 'tag';
-
             const icon = tagIcons[tag] || 'label';
             tagElement.innerHTML = `<i class="material-icons">${icon}</i>${tag.charAt(0).toUpperCase() + tag.slice(1).replace(/-/g, ' ')}`;
-
             tagContainer.appendChild(tagElement);
         });
 
@@ -73,13 +81,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ticketIcon.textContent = 'confirmation_number';
         const ticketNumber = document.createElement('span');
         ticketNumber.textContent = `x ${tickets}`;
-
         ticketCount.appendChild(ticketIcon);
         ticketCount.appendChild(ticketNumber);
 
         const priceElement = document.createElement('div');
-        priceElement.className = 'ticket-price';
-        priceElement.textContent = `$${parseFloat(price).toFixed(2)} per ticket`;
+        priceElement.className = 'price';
+        priceElement.textContent = `$${price}`;
+
+        const sellButton = document.createElement('button');
+        sellButton.innerHTML = '<i class="material-icons">attach_money</i>';
+        sellButton.addEventListener('click', () => {
+            openSellProcedure(name, location, price);
+        });
 
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = '<i class="material-icons">delete</i>';
@@ -89,95 +102,106 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const importantButton = document.createElement('button');
         importantButton.className = 'icon-button';
-        importantButton.innerHTML = '<i class="material-icons">star</i>';
+        importantButton.innerHTML = '<i class="material-icons">star_border</i>';
         importantButton.addEventListener('click', () => {
-            eventText.classList.toggle('important');
+            li.classList.toggle('important');
+            importantButton.innerHTML = `<i class="material-icons">${li.classList.contains('important') ? 'star' : 'star_border'}</i>`;
         });
 
         const editButton = document.createElement('button');
-        editButton.className = 'icon-button';
         editButton.innerHTML = '<i class="material-icons">edit</i>';
         editButton.addEventListener('click', () => {
-            editForm.style.display = 'flex';
-            eventText.style.display = 'none';
-            ticketCount.style.display = 'none';
-            priceElement.style.display = 'none';
-            eventMap.style.display = 'none';
+            const editForm = document.createElement('div');
+            editForm.className = 'edit-form';
+            editForm.innerHTML = `
+                <input type="text" value="${name}" required>
+                <input type="text" class="datepicker" value="${date}" required>
+                <input type="number" value="${tickets}" required min="1">
+                <input type="number" value="${price}" required min="1">
+                <input type="text" value="${location}" required>
+                <button type="submit" class="save-button"><i class="material-icons">save</i></button>
+            `;
+            li.appendChild(editForm);
+            flatpickr(editForm.querySelector('.datepicker'), {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+            editForm.querySelector('button').addEventListener('click', (e) => {
+                e.preventDefault();
+                const updatedName = editForm.querySelector('input[type="text"]').value;
+                const updatedDate = editForm.querySelector('.datepicker').value;
+                const updatedTickets = editForm.querySelector('input[type="number"]').value;
+                const updatedPrice = editForm.querySelector('input[type="number"]').value;
+                const updatedLocation = editForm.querySelector('input[type="text"]').value;
+                li.querySelector('span').textContent = `${updatedName} - ${updatedDate} - ${updatedLocation}`;
+                li.querySelector('.ticket-count span').textContent = `x ${updatedTickets}`;
+                li.querySelector('.price').textContent = `$${updatedPrice}`;
+                li.removeChild(editForm);
+            });
             editButton.style.display = 'none';
-            deleteButton.style.display = 'none';
-            importantButton.style.display = 'none';
         });
 
-        const editForm = document.createElement('div');
-        editForm.className = 'edit-form';
-        const editName = document.createElement('input');
-        editName.type = 'text';
-        editName.value = name;
-        const editDate = document.createElement('input');
-        editDate.type = 'text';
-        editDate.value = date;
-        const editPrice = document.createElement('input');
-        editPrice.type = 'number';
-        editPrice.value = price;
-        editPrice.step = '0.01';
-        const saveButton = document.createElement('button');
-        saveButton.className = 'save-button';
-        saveButton.innerHTML = '<i class="material-icons">save</i> Save';
-        saveButton.addEventListener('click', () => {
-            eventText.textContent = `${editName.value} - ${editDate.value} - ${eventLocation.value}`;
-            name = editName.value;
-            date = editDate.value;
-            price = editPrice.value;
-            eventLocation = editLocation.value;
-            editForm.style.display = 'none';
-            eventText.style.display = 'block';
-            ticketCount.style.display = 'flex';
-            priceElement.style.display = 'block';
-            eventMap.style.display = 'block';
-            editButton.style.display = 'inline-block';
-            deleteButton.style.display = 'inline-block';
-            importantButton.style.display = 'inline-block';
-        });
-
-        editForm.appendChild(editName);
-        editForm.appendChild(editDate);
-        editForm.appendChild(editPrice);
-        editForm.appendChild(saveButton);
-
-        const eventMap = document.createElement('div');
-        eventMap.className = 'event-map';
+        const mapContainer = document.createElement('div');
+        mapContainer.className = 'event-map';
+        li.appendChild(mapContainer);
+        initializeMap(mapContainer, location);
 
         li.appendChild(eventText);
         li.appendChild(tagContainer);
         li.appendChild(ticketCount);
         li.appendChild(priceElement);
-        li.appendChild(eventMap);
+        li.appendChild(sellButton);
+        li.appendChild(deleteButton);
         li.appendChild(importantButton);
         li.appendChild(editButton);
-        li.appendChild(deleteButton);
-        li.appendChild(editForm);
-        eventList.appendChild(li);
 
-        initMap(eventMap, location);
+        eventList.appendChild(li);
     }
 
-    function initMap(mapElement, address) {
-        const map = L.map(mapElement).setView([51.505, -0.09], 2);
+    function openSellProcedure(eventName, eventLocation, ticketPrice) {
+        ticketModal.style.display = 'block';
+        paymentSection.classList.remove('hidden');
+        ticketSection.classList.add('hidden');
+        
+        setTimeout(() => {
+            paymentSection.classList.add('hidden');
+            ticketSection.classList.remove('hidden');
+            generateTicket(eventName, eventLocation, ticketPrice);
+        }, 2000);
+    }
+
+    function generateTicket(eventName, eventLocation, ticketPrice) {
+        ticketDetails.innerHTML = `
+            <p><strong>Event:</strong> ${eventName}</p>
+            <p><strong>Location:</strong> ${eventLocation}</p>
+            <p><strong>Price:</strong> $${ticketPrice}</p>
+        `;
+        $('#ticketQRCode').qrcode({
+            text: `Event: ${eventName}, Location: ${eventLocation}, Price: $${ticketPrice}`
+        });
+    }
+
+    document.querySelector('.close').addEventListener('click', () => {
+        ticketModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == ticketModal) {
+            ticketModal.style.display = 'none';
+        }
+    });
+
+    function initializeMap(container, address) {
+        const map = L.map(container).setView([0, 0], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        geocodeAddress(address, map);
-    }
-
-    function geocodeAddress(address, map) {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
-        fetch(url)
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${address}`)
             .then(response => response.json())
             .then(data => {
-                if (data && data.length > 0) {
-                    const location = data[0];
-                    const latLng = [location.lat, location.lon];
+                if (data.length > 0) {
+                    const latLng = [data[0].lat, data[0].lon];
                     L.marker(latLng).addTo(map).bindPopup(address);
                     map.setView(latLng, 13);
                 } else {
@@ -189,3 +213,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 });
+

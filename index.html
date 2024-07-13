@@ -8,10 +8,17 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script> 
 </head>
 <body>
     <div class="container">
-        <h1>Event Manager</h1>
+        <div id="header">
+            <h1>Event Manager</h1>
+            <div id="ticketButton">
+                <i class="material-icons">attach_money</i>
+            </div>
+        </div>
         <form id="eventForm">
             <input type="text" id="eventName" placeholder="Event Name" required>
             <input type="text" id="eventDate" class="datepicker" placeholder="Event Date" required>
@@ -40,8 +47,27 @@
         <ul id="eventList"></ul>
         <div id="calendar"></div>
     </div>
+
+    <div id="ticketModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Sell Ticket</h2>
+            <div id="paymentSection" class="hidden">
+                <p>Processing Payment...</p>
+                <div id="paymentAnimation"></div>
+            </div>
+            <div id="ticketSection" class="hidden">
+                <h3>Ticket</h3>
+                <div id="ticketDetails"></div>
+                <div id="ticketQRCode"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-qrcode@1.0/jquery.qrcode.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
