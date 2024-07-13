@@ -81,7 +81,7 @@ li button {
 }
 
 li button:hover {
-    background: #c82333;
+    background: #b7aaab;
 }
 
 .ticket-count {
@@ -93,4 +93,39 @@ li button:hover {
 
 .ticket-count i {
     margin-right: 5px;
+}
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007bff;
+    padding: 5px;
+}
+
+.icon-button:hover {
+    color: #0056b3;
+}
+
+.important {
+    color: #ffc107;
+}
+
+.edit-form {
+    display: none;
+    flex-direction: column;
+}
+
+.edit-form input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.save-button {
+    background: #17a2b8;
+}
+
+.save-button:hover {
+    background: #138496;
 }
