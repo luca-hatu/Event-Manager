@@ -6,6 +6,7 @@
     <title>Event Manager</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
     <div class="container">
@@ -14,10 +15,13 @@
             <input type="text" id="eventName" placeholder="Event Name" required>
             <input type="date" id="eventDate" required>
             <input type="number" id="eventTickets" placeholder="Number of Tickets" required min="1">
+            <input type="text" id="eventLocation" placeholder="Event Location" required>
             <button type="submit"><i class="material-icons">add</i> Add Event</button>
         </form>
         <ul id="eventList"></ul>
+        <div id="map"></div>
     </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
