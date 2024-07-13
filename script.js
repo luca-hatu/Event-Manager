@@ -2,6 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventForm = document.getElementById('eventForm');
     const eventList = document.getElementById('eventList');
 
+    flatpickr(".datepicker", {
+        dateFormat: "Y-m-d", 
+        minDate: "today" 
+    });
+
     eventForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const eventName = document.getElementById('eventName').value;
@@ -51,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editName.type = 'text';
         editName.value = name;
         const editDate = document.createElement('input');
-        editDate.type = 'date';
+        editDate.type = 'text';
         editDate.value = date;
         const saveButton = document.createElement('button');
         saveButton.className = 'save-button';

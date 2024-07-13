@@ -7,21 +7,25 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <h1>Event Manager</h1>
         <form id="eventForm">
             <input type="text" id="eventName" placeholder="Event Name" required>
-            <input type="date" id="eventDate" required>
+            <input type="text" id="eventDate" class="datepicker" placeholder="Event Date" required>
             <input type="number" id="eventTickets" placeholder="Number of Tickets" required min="1">
             <input type="text" id="eventLocation" placeholder="Event Location" required>
             <button type="submit"><i class="material-icons">add</i> Add Event</button>
         </form>
         <ul id="eventList"></ul>
-        <div id="map"></div>
+        <div id="calendar"></div>
     </div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
