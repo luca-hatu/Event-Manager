@@ -18,6 +18,25 @@
             <input type="text" id="eventDate" class="datepicker" placeholder="Event Date" required>
             <input type="number" id="eventTickets" placeholder="Number of Tickets" required min="1">
             <input type="text" id="eventLocation" placeholder="Event Location" required>
+            <div id="tagSelection" class="tag-selection">
+                <!-- Icons for tag selection -->
+                <div class="tag-icon" data-tag="cinema" title="Cinema">
+                    <i class="material-icons">local_movies</i>
+                </div>
+                <div class="tag-icon" data-tag="festival" title="Festival">
+                    <i class="material-icons">celebration</i>
+                </div>
+                <div class="tag-icon" data-tag="musical-concert" title="Musical Concert">
+                    <i class="material-icons">music_note</i>
+                </div>
+                <div class="tag-icon" data-tag="classical-music" title="Classical Music">
+                    <i class="material-icons">music_off</i>
+                </div>
+                <div class="tag-icon" data-tag="children" title="Children">
+                    <i class="material-icons">child_care</i>
+                </div>
+                <!-- Add more icons as needed -->
+            </div>
             <button type="submit"><i class="material-icons">add</i> Add Event</button>
         </form>
         <ul id="eventList"></ul>
@@ -29,3 +48,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+

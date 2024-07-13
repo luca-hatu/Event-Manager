@@ -1,10 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
     const eventForm = document.getElementById('eventForm');
     const eventList = document.getElementById('eventList');
+    const tagSelection = document.getElementById('tagSelection');
 
     flatpickr(".datepicker", {
-        dateFormat: "Y-m-d", 
-        minDate: "today" 
+        dateFormat: "Y-m-d",
+        minDate: "today"
+    });
+
+    // Define tag icons mapping
+    const tagIcons = {
+        cinema: 'local_movies',
+        festival: 'celebration',
+        'musical-concert': 'music_note',
+        'classical-music': 'music_off',
+        children: 'child_care',
+        // Add more tags and their respective icons here
+    };
+
+    // Track selected tags
+    let selectedTags = new Set();
+
+    // Handle icon clicks
+    tagSelection.addEventListener('click', (e) => {
+        if (e.target.classList.contains('tag-icon') || e.target.parentElement.classList.contains('tag-icon')) {
+            const tagElement = e.target.classList.contains('tag-icon') ? e.target : e.target.parentElement;
+            const tag = tagElement.dataset.tag;
+            if (selectedTags.has(tag)) {
+                selectedTags.delete(tag);
+                tagElement.classList.remove('selected');
+            } else {
+                selectedTags.add(tag);
+                tagElement.classList.add('selected');
+            }
+        }
     });
 
     eventForm.addEventListener('submit', (e) => {
@@ -13,16 +42,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const eventDate = document.getElementById('eventDate').value;
         const eventTickets = document.getElementById('eventTickets').value;
         const eventLocation = document.getElementById('eventLocation').value;
+        const eventTags = Array.from(selectedTags);
 
-        addEvent(eventName, eventDate, eventTickets, eventLocation);
+        addEvent(eventName, eventDate, eventTickets, eventLocation, eventTags);
         eventForm.reset();
+        selectedTags.clear();
+        document.querySelectorAll('.tag-icon').forEach(icon => icon.classList.remove('selected'));
     });
 
-    function addEvent(name, date, tickets, location) {
+    function addEvent(name, date, tickets, location, tags) {
         const li = document.createElement('li');
 
         const eventText = document.createElement('span');
         eventText.textContent = `${name} - ${date} - ${location}`;
+
+        const tagContainer = document.createElement('div');
+        tagContainer.className = 'tag-container';
+
+        tags.forEach(tag => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'tag';
+
+            // Get the icon for the tag or use a default icon
+            const icon = tagIcons[tag] || 'label';
+            tagElement.innerHTML = `<i class="material-icons">${icon}</i>${tag.charAt(0).toUpperCase() + tag.slice(1).replace(/-/g, ' ')}`;
+
+            tagContainer.appendChild(tagElement);
+        });
 
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = '<i class="material-icons">delete</i>';
@@ -73,6 +119,16 @@ document.addEventListener('DOMContentLoaded', () => {
             editButton.style.display = 'inline-block';
             deleteButton.style.display = 'inline-block';
             importantButton.style.display = 'inline-block';
+
+            // Update tags and icons
+            tagContainer.innerHTML = '';
+            Array.from(selectedTags).forEach(tag => {
+                const tagElement = document.createElement('div');
+                tagElement.className = 'tag';
+                const icon = tagIcons[tag] || 'label';
+                tagElement.innerHTML = `<i class="material-icons">${icon}</i>${tag.charAt(0).toUpperCase() + tag.slice(1).replace(/-/g, ' ')}`;
+                tagContainer.appendChild(tagElement);
+            });
         });
 
         editForm.appendChild(editName);
@@ -94,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         eventMap.className = 'event-map';
 
         li.appendChild(eventText);
+        li.appendChild(tagContainer);
         li.appendChild(ticketCount);
         li.appendChild(eventMap);
         li.appendChild(importantButton);
