@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ticketDetails = document.getElementById('ticketDetails');
     const ticketQRCode = document.getElementById('ticketQRCode');
     const filterButtons = document.querySelectorAll('.filter-btn');
-    const searchBar = document.getElementById('searchBar');
-
+    
     flatpickr(".datepicker", {
         dateFormat: "Y-m-d",
         minDate: "today"
@@ -64,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function addEvent(name, date, tickets, price, location, tags) {
         const li = document.createElement('li');
         li.classList.add(...tags);
-
         const eventText = document.createElement('span');
         eventText.textContent = `${name} - ${date} - ${location}`;
 
@@ -238,3 +236,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
