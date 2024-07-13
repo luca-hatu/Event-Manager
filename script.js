@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ticketDetails = document.getElementById('ticketDetails');
     const ticketQRCode = document.getElementById('ticketQRCode');
     const filterButtons = document.querySelectorAll('.filter-btn');
-    
+    const searchBar = document.getElementById('searchBar');
+
     flatpickr(".datepicker", {
         dateFormat: "Y-m-d",
         minDate: "today"
@@ -62,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addEvent(name, date, tickets, price, location, tags) {
         const li = document.createElement('li');
-        li.classList.add(...tags);
+        li.classList.add(...tags); // Add tags as classes for filtering
+
         const eventText = document.createElement('span');
         eventText.textContent = `${name} - ${date} - ${location}`;
 
@@ -221,13 +223,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const filterTags = selectedFilter ? selectedFilter.dataset.filter : null;
 
         document.querySelectorAll('#eventList > li').forEach(eventItem => {
-            if (filterTags === null || filterTags === 'all' || eventItem.classList.contains(filterTags)) {
+            const matchesFilter = filterTags === null || filterTags === 'all' || eventItem.classList.contains(filterTags);
+            const matchesSearch = eventItem.textContent.toLowerCase().includes(searchBar.value.toLowerCase());
+
+            if (matchesFilter && matchesSearch) {
                 eventItem.style.display = 'list-item';
             } else {
                 eventItem.style.display = 'none';
             }
         });
     }
+
+    function searchEvents() {
+        filterEvents(); // Apply the filter after searching
+    }
+
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
             filterButtons.forEach(btn => btn.classList.remove('selected'));
@@ -235,5 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
             filterEvents();
         });
     });
+
+    searchBar.addEventListener('input', searchEvents);
 });
+
 
